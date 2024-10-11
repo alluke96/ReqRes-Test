@@ -8,20 +8,22 @@ class UserRepository {
   UserRepository(this.apiDataSource);
 
   Future<User?> login(String email, String password) async {
-    final token = await apiDataSource.login(email, password);
-    Logger().i(token);
-    final user = await apiDataSource.getUsers();
-    Logger().i(user);
+    final response = await apiDataSource.login(email, password);
+    if (response.isEmpty) {
+      Logger().e('Login failed');
+      return null;
+    }
+    
+    final users = await apiDataSource.getUsers();
 
-    // Find user in user list
+    // Find user in users list
     User? foundUser;
-    for (final u in user) {
-      if (u.email == email || u.username == email) {
+    for (final u in users) {
+      if (u.email == email) {
         foundUser = u;
         break;
       }
     }
-    Logger().i(foundUser);
 
     if (foundUser == null) {
       Logger().e('User not found');

@@ -29,7 +29,7 @@ class ApiDataSource {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)['data'];
-      return data.map((e) => User.fromJson(e)).toList();
+      return List<User>.from(data.map((user) => User.fromJson(user)));
     } else {
       final error = jsonDecode(response.body)['error'];
       throw Exception('Failed to fetch users: $error');

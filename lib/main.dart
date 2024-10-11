@@ -10,7 +10,7 @@ import 'data/data_sources/api_data_source.dart';
 import 'data/repositories/user_repository.dart';
 
 void main() async {
-  await dotenv.load(fileName: "assets/.env");
+  await dotenv.load(fileName: ".env");
 
   runApp(const MyApp());
 }

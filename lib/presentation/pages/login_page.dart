@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
 
       // Double verification (API already does that)
       if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-        throw Exception('Please enter e-mail (or username) and password');
+        throw Exception('Please enter e-mail and password');
       }
 
       final authService = Provider.of<AuthService>(context, listen: false);
@@ -36,8 +36,6 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text,
       );
 
-      Logger().i(user);
-      
       if (user != null && mounted) {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(user: user)));
       }
@@ -146,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                               controller: _emailController,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: "Username or E-mail",
+                                hintText: "E-mail",
                                 hintStyle: TextStyle(color: Colors.grey.shade700)
                               ),
                             ),
