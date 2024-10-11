@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import '../../domain/models/user.dart';
+import 'package:reqres_test/domain/models/user.dart';
 
 class ApiDataSource {
-  final String baseUrl = 'https://reqres.in/api';
+  final String baseUrl = dotenv.get('API_URL');
   final http.Client httpClient;
 
   ApiDataSource(this.httpClient);
@@ -18,7 +19,20 @@ class ApiDataSource {
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Falha ao logar: ${response.body}');
+      final error = jsonDecode(response.body)['error'];
+      throw Exception('Login failed: $error');
+    }
+  }
+
+  Future<List<User>> getUsers() async {
+    final response = await httpClient.get(Uri.parse('$baseUrl/users'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body)['data'];
+      return data.map((e) => User.fromJson(e)).toList();
+    } else {
+      final error = jsonDecode(response.body)['error'];
+      throw Exception('Failed to fetch users: $error');
     }
   }
 
@@ -29,7 +43,20 @@ class ApiDataSource {
       final data = jsonDecode(response.body)['data'];
       return User.fromJson(data);
     } else {
-      throw Exception('Falha ao buscar usuário: ${response.body}');
+      final error = jsonDecode(response.body)['error'];
+      throw Exception('Failed to fetch user: $error');
+    }
+  }
+
+  Future<void> logout() async {
+    final response = await httpClient.post(Uri.parse('$baseUrl/logout'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body)['data'];
+      return data;
+    } else {
+      final error = jsonDecode(response.body)['error'];
+      throw Exception('Failed to logout: $error');
     }
   }
 }

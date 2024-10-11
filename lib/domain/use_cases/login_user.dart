@@ -1,5 +1,5 @@
-import '../models/user.dart';
-import '../../data/repositories/user_repository.dart';
+import 'package:reqres_test/data/repositories/user_repository.dart';
+import 'package:reqres_test/domain/models/user.dart';
 
 class LoginUser {
   final UserRepository userRepository;
