@@ -4,9 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:reqres_test/domain/use_cases/login_user.dart';
 import 'package:reqres_test/domain/use_cases/logout_user.dart';
+import 'package:reqres_test/domain/use_cases/register_user.dart';
 import 'package:reqres_test/presentation/pages/login_page.dart';
 import 'application/auth_service.dart';
-import 'data/data_sources/api_data_source.dart';
+import 'data/data_sources/user_api_data_source.dart';
 import 'data/repositories/user_repository.dart';
 
 void main() async {
@@ -33,8 +34,11 @@ class MyApp extends StatelessWidget {
         ProxyProvider<UserRepository, LogoutUser>(
           update: (_, userRepository, __) => LogoutUser(userRepository),
         ),
+        ProxyProvider<UserRepository, RegisterUser>(
+          update: (_, userRepository, __) => RegisterUser(userRepository),
+        ),
         ChangeNotifierProvider(
-          create: (context) => AuthService(context.read<LoginUser>(), context.read<LogoutUser>()),
+          create: (context) => AuthService(context.read<LoginUser>(), context.read<LogoutUser>(), context.read<RegisterUser>()),
         ),
       ],
       child: MaterialApp(

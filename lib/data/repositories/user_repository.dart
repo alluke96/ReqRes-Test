@@ -1,5 +1,5 @@
 import 'package:logger/logger.dart';
-import 'package:reqres_test/data/data_sources/api_data_source.dart';
+import 'package:reqres_test/data/data_sources/user_api_data_source.dart';
 import 'package:reqres_test/domain/models/user.dart';
 
 class UserRepository {
@@ -13,6 +13,9 @@ class UserRepository {
       Logger().e('Login failed');
       return null;
     }
+
+    final token = response['token'];
+    Logger().d('Login success with token: $token');
     
     final users = await apiDataSource.getUsers();
 
@@ -35,5 +38,34 @@ class UserRepository {
 
   Future<void> logout() async {
     return await apiDataSource.logout();
+  }
+
+  Future<User?> register(String email, String password) async {
+    final response = await apiDataSource.register(email, password);
+    if (response.isEmpty) {
+      Logger().e('Login failed');
+      return null;
+    }
+
+    final token = response['token'];
+    Logger().d('Login success with token: $token');
+    
+    final users = await apiDataSource.getUsers();
+
+    // Find user in users list
+    User? foundUser;
+    for (final u in users) {
+      if (u.email == email) {
+        foundUser = u;
+        break;
+      }
+    }
+
+    if (foundUser == null) {
+      Logger().e('User not found');
+      return null;
+    }
+
+    return await apiDataSource.getUser(foundUser.id);
   }
 }

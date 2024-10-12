@@ -5,6 +5,8 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:reqres_test/application/auth_service.dart';
 import 'package:reqres_test/domain/models/user.dart';
+import 'package:reqres_test/presentation/pages/register_page.dart';
+import 'package:reqres_test/presentation/widgets/login_header';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -57,49 +59,14 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(
-              height: 400,
-              child: Stack(
-                children: <Widget>[
-
-                  Positioned(
-                    top: -40,
-                    height: 400,
-                    width: width,
-                    child: FadeInUp(duration: const Duration(seconds: 1), child: Container(
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/background.png'),
-                          fit: BoxFit.fill
-                        )
-                      ),
-                    )),
-                  ),
-
-                  Positioned(
-                    height: 400,
-                    width: width,
-                    child: FadeInUp(duration: const Duration(milliseconds: 1000), child: Container(
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/background-2.png'),
-                          fit: BoxFit.fill
-                        )
-                      ),
-                    )),
-                  )
-
-                ],
-              ),
-            ),
+            
+            const LoginHeader(),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -135,11 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: const BoxDecoration(
-                              border: Border(bottom: BorderSide(
-                                color: Color.fromRGBO(197, 198, 135, 0.298)
-                              ))
+                              border: Border(bottom: BorderSide(color: Color.fromRGBO(197, 198, 135, 0.298)))
                             ),
-
                             child: TextField(
                               controller: _emailController,
                               decoration: InputDecoration(
@@ -202,8 +166,8 @@ class _LoginPageState extends State<LoginPage> {
                     duration: const Duration(milliseconds: 2000), 
                     child: Center(
                       child: TextButton(
-                        onPressed: () {}, 
-                        child: const Text("Create Account", style: TextStyle(color: Color.fromRGBO(79, 76, 39, 0.6)),
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage())),
+                        child: const Text("Create account", style: TextStyle(color: Color.fromRGBO(79, 76, 39, 0.6)),
                         )
                       )
                     )

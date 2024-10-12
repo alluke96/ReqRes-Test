@@ -1,15 +1,15 @@
 class User {
   final int id;
   final String email;
-  final String first_name;
-  final String last_name;
+  final String firstName;
+  final String lastName;
   final String avatar;
 
   User({
     required this.id,
     required this.email,
-    required this.first_name,
-    required this.last_name,
+    required this.firstName,
+    required this.lastName,
     required this.avatar,
   });
 
@@ -17,8 +17,8 @@ class User {
     return User(
       id: json['id'],
       email: json['email'],
-      first_name: json['first_name'],
-      last_name: json['last_name'],
+      firstName: json['first_name'],
+      lastName: json['last_name'],
       avatar: json['avatar'],
     );
   }
@@ -27,8 +27,8 @@ class User {
     return {
       'id': id,
       'email': email,
-      'first_name': first_name,
-      'last_name': last_name,
+      'first_name': firstName,
+      'last_name': lastName,
       'avatar': avatar,
     };
   }
