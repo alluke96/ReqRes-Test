@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:reqres_test/application/blocs/login/login_bloc.dart';
-import 'package:reqres_test/application/blocs/login/login_states.dart';
-import 'package:reqres_test/presentation/pages/home_page.dart';
-import 'package:reqres_test/presentation/widgets/login_header.dart';
-import 'package:reqres_test/presentation/widgets/login_form.dart';
+import 'package:reqres_test/blocs/login/login_bloc.dart';
+import 'package:reqres_test/blocs/login/login_states.dart';
+import 'package:reqres_test/view/pages/home_page.dart';
+import 'package:reqres_test/view/widgets/login_header.dart';
+import 'package:reqres_test/view/widgets/login_form.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

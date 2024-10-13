@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reqres_test/application/blocs/login/login_events.dart';
-import 'package:reqres_test/application/blocs/login/login_states.dart';
+import 'package:reqres_test/blocs/login/login_events.dart';
+import 'package:reqres_test/blocs/login/login_states.dart';
 import 'package:reqres_test/data/repositories/user_repository.dart';
 import 'package:reqres_test/data/data_sources/user_api_data_source.dart';
 import 'package:shared_preferences/shared_preferences.dart';

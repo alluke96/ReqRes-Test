@@ -1,6 +1,6 @@
 import 'package:logger/logger.dart';
 import 'package:reqres_test/data/data_sources/user_api_data_source.dart';
-import 'package:reqres_test/domain/models/user.dart';
+import 'package:reqres_test/models/user.dart';
 
 class UserRepository {
   final ApiDataSource apiDataSource;

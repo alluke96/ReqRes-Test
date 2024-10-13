@@ -2,12 +2,12 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:reqres_test/application/blocs/login/login_bloc.dart';
-import 'package:reqres_test/application/blocs/login/login_events.dart';
-import 'package:reqres_test/application/blocs/login/login_states.dart';
+import 'package:reqres_test/blocs/login/login_bloc.dart';
+import 'package:reqres_test/blocs/login/login_events.dart';
+import 'package:reqres_test/blocs/login/login_states.dart';
 import 'package:http/http.dart' as http;
 import 'package:reqres_test/data/repositories/user_repository.dart';
-import 'package:reqres_test/domain/models/user.dart';
+import 'package:reqres_test/models/user.dart';
 
 class MockUserRepository extends Mock implements UserRepository {}
 

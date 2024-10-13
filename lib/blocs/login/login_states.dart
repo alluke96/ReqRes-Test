@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:reqres_test/domain/models/user.dart';
+import 'package:reqres_test/models/user.dart';
 
 abstract class LoginState extends Equatable {
   const LoginState();
