@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:reqres_test/application/blocs/login/login_bloc.dart';
 import 'package:reqres_test/presentation/pages/login_page.dart';
 
@@ -16,7 +15,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => LoginBloc()..init(dotenv.get('API_URL'))),
+        BlocProvider(create: (context) => LoginBloc()..init()),
       ],
       child: const MaterialApp(
         home: LoginPage(),

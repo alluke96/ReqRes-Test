@@ -3,13 +3,10 @@ import 'package:http/http.dart' as http;
 import 'package:reqres_test/domain/models/user.dart';
 
 class ApiDataSource {
-  final String baseUrl;
-  final http.Client httpClient;
-
-  ApiDataSource(this.httpClient, this.baseUrl);
+  String baseUrl = 'https://reqres.in/api';
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await httpClient.post(
+    final response = await http.post(
       Uri.parse('$baseUrl/login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
@@ -24,7 +21,7 @@ class ApiDataSource {
   }
 
   Future<List<User>> getUsers() async {
-    final response = await httpClient.get(Uri.parse('$baseUrl/users'));
+    final response = await http.get(Uri.parse('$baseUrl/users'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)['data'];
@@ -36,7 +33,7 @@ class ApiDataSource {
   }
 
   Future<User?> getUser(int id) async {
-    final response = await httpClient.get(Uri.parse('$baseUrl/users/$id'));
+    final response = await http.get(Uri.parse('$baseUrl/users/$id'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)['data'];
@@ -48,7 +45,7 @@ class ApiDataSource {
   }
 
   Future<void> logout() async {
-    final response = await httpClient.post(Uri.parse('$baseUrl/logout'));
+    final response = await http.post(Uri.parse('$baseUrl/logout'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)['data'];

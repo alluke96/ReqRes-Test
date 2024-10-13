@@ -13,6 +13,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
+        backgroundColor: Colors.amber,
       ),
       body: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
@@ -20,28 +21,73 @@ class HomePage extends StatelessWidget {
             final user = state.user;
 
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Welcome, ${user.firstName} ${user.lastName}!'),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(20.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Welcome, ${user.firstName} ${user.lastName}!',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
 
-                  const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                  Image.network(user.avatar),
+                        Image.network(user.avatar),
 
-                  const SizedBox(height: 20),
-                  
-                  ElevatedButton(
-                    onPressed: () => _logout(context),
-                    child: const Text('Logout'),
+                        const SizedBox(height: 20),
+
+                        ElevatedButton(
+                          onPressed: () => _logout(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amberAccent,
+                            foregroundColor: Colors.black,
+                          ),
+                          child: const Text('Logout'),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
             );
           } else if (state is LoginLoading) {
             return const Center(child: CircularProgressIndicator());
           } else {
-            return const Center(child: Text('Please log in.'));
+            return Column(
+              children: [
+                const Center(child: Text('Please log in')),
+
+                const SizedBox(height: 20),
+
+                ElevatedButton(
+                  onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage())),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amberAccent,
+                    foregroundColor: Colors.black,
+                  ),
+                  child: const Text('Login'),
+                )
+              ],
+            );
           }
         },
       ),
@@ -50,7 +96,7 @@ class HomePage extends StatelessWidget {
 
   void _logout(BuildContext context) {
     context.read<LoginBloc>().add(LogoutButtonPressed());
-
+    
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 }

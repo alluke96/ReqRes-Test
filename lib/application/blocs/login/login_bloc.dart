@@ -4,7 +4,7 @@ import 'package:reqres_test/application/blocs/login/login_states.dart';
 import 'package:reqres_test/data/repositories/user_repository.dart';
 import 'package:reqres_test/domain/use_cases/login_user.dart';
 import 'package:reqres_test/data/data_sources/user_api_data_source.dart';
-import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   late ApiDataSource apiDataSource;
@@ -16,9 +16,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LogoutButtonPressed>(_onLogoutButtonPressed);
   }
 
-  void init(String baseUrl) {
-    final httpClient = http.Client();
-    apiDataSource = ApiDataSource(httpClient, baseUrl);
+  void init() {
+    apiDataSource = ApiDataSource();
     userRepository = UserRepository(apiDataSource);
     loginUserUseCase = LoginUser(userRepository);
   }
@@ -39,6 +38,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         // Pega o usuário baseado no e-mail, afinal na API do ReqRes só retorna um token (nem é JWT)
         final user = await userRepository.getUser(event.email);
 
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+
         emit(LoginSuccess(user!));
       } else {
         emit(const LoginFailure('Login failed'));
@@ -52,6 +54,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Future<void> _onLogoutButtonPressed(LogoutButtonPressed event, Emitter<LoginState> emit) async {
     await userRepository.logout();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
     emit(LoginInitial());
   }
 }

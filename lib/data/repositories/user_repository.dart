@@ -14,14 +14,14 @@ class UserRepository {
       return null;
     }
 
-    final token = response['token'];
+    final String token = response['token'];
     return token;
   }
 
   Future<User?> getUser(String email) async {
     final users = await apiDataSource.getUsers();
 
-    // Find user in users list
+    // Encontra o usuário com o e-mail informado
     User? foundUser;
     for (final u in users) {
       if (u.email == email) {

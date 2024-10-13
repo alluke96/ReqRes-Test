@@ -15,61 +15,73 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Definindo a largura máxima do formulário
+          double formMaxWidth = constraints.maxWidth > 600 ? 400 : constraints.maxWidth * 0.9;
 
-            const LoginHeader(),
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
 
-            BlocListener<LoginBloc, LoginState>(
-              listener: (context, state) {
-                if (state is LoginFailure) {
-                  Fluttertoast.showToast(
-                    msg: state.error,
-                    toastLength: Toast.LENGTH_LONG,
-                    backgroundColor: Colors.red,
-                    webBgColor: 'linear-gradient(to right, #FF0000, #FF0000)',
-                    textColor: Colors.white,
-                  );
-                }
-                if (state is LoginSuccess) {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
-                }
-              },
-              child: BlocBuilder<LoginBloc, LoginState>(
-                builder: (context, state) {
-                  if (state is LoginLoading) {
-                    return const Column(
-                      children: [
-                        Text('Logging in...', style: TextStyle(color: Color.fromRGBO(78, 79, 39, 1), fontWeight: FontWeight.bold, fontSize: 30)),
-                        
-                        SizedBox(height: 30),
+                const LoginHeader(),
 
-                        Center(child: CircularProgressIndicator()),
-                      ],
-                    );
-                  }
-                  return Column(
-                    children: [
-                      const LoginForm(),
-
-                      const SizedBox(height: 20),
-
-                      Center(child: TextButton(onPressed: () {}, child: const Text("Create an account", style: TextStyle(color: Color.fromRGBO(79, 76, 39, 0.6))))),
-                    ],
-                  );
-                },
-              ),
+                BlocListener<LoginBloc, LoginState>(
+                  listener: (context, state) {
+                    if (state is LoginFailure) {
+                      Fluttertoast.showToast(
+                        msg: state.error,
+                        toastLength: Toast.LENGTH_LONG,
+                        backgroundColor: Colors.red,
+                        webBgColor: 'linear-gradient(to right, #FF0000, #FF0000)',
+                        textColor: Colors.white,
+                      );
+                    }
+                    if (state is LoginSuccess) {
+                      Navigator.pushReplacement(
+                          context, MaterialPageRoute(builder: (context) => const HomePage()));
+                    }
+                  },
+                  child: BlocBuilder<LoginBloc, LoginState>(
+                    builder: (context, state) {
+                      if (state is LoginLoading) {
+                        return const Column(
+                          children: [
+                            Text('Logging in...', style: TextStyle(color: Color.fromRGBO(78, 79, 39, 1), fontWeight: FontWeight.bold, fontSize: 30)),
+                      
+                            SizedBox(height: 30),
+                      
+                            Center(child: CircularProgressIndicator()),
+                          ],
+                        );
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            constraints: BoxConstraints(maxWidth: formMaxWidth),
+                            child: const LoginForm()
+                          ),
+                      
+                          const SizedBox(height: 20),
+                      
+                          Center(child: TextButton(onPressed: () {}, child: const Text("Create an account", style: TextStyle(color: Color.fromRGBO(79, 76, 39, 0.6))))),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-
-          ],
-        ),
+          );
+        },
       ),
     );
   }

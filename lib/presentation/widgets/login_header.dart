@@ -9,13 +9,14 @@ class LoginHeader extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
 
     return SizedBox(
-      height: 400,
+      height: 300,
       child: Stack(
+        alignment: Alignment.center,
         children: <Widget>[
 
           Positioned(
-            top: -40,
-            height: 400,
+            top: -140,
+            height: 300,
             width: width,
             child: FadeInDown(duration: const Duration(seconds: 1), 
               child: Container(
@@ -30,14 +31,14 @@ class LoginHeader extends StatelessWidget {
           ),
 
           Positioned(
-            height: 400,
+            height: 300,
             width: width,
             child: FadeInDown(duration: const Duration(milliseconds: 1000), 
               child: Container(
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/images/background-2.png'),
-                    fit: BoxFit.fill
+                    fit: BoxFit.scaleDown
                   )
                 ),
               )
