@@ -2,14 +2,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reqres_test/application/blocs/login/login_events.dart';
 import 'package:reqres_test/application/blocs/login/login_states.dart';
 import 'package:reqres_test/data/repositories/user_repository.dart';
-import 'package:reqres_test/domain/use_cases/login_user.dart';
 import 'package:reqres_test/data/data_sources/user_api_data_source.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   late ApiDataSource apiDataSource;
   late UserRepository userRepository;
-  late LoginUser loginUserUseCase;
 
   LoginBloc() : super(LoginInitial()) {
     on<LoginButtonPressed>(_onLoginButtonPressed);
@@ -19,10 +17,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   void init() {
     apiDataSource = ApiDataSource();
     userRepository = UserRepository(apiDataSource);
-    loginUserUseCase = LoginUser(userRepository);
   }
 
   Future<void> _onLoginButtonPressed(LoginButtonPressed event, Emitter<LoginState> emit) async {
+    if (event.email.isNotEmpty && !event.email.contains(RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'))) {
+      emit(const LoginFailure('Please enter a valid email'));
+      emit(LoginInitial());
+      return;
+    }
+
     if (event.email.isEmpty || event.password.isEmpty) {
       emit(const LoginFailure('Email and password are required'));
       emit(LoginInitial());
@@ -32,14 +35,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(LoginLoading());
 
     try {
-      final token = await loginUserUseCase(event.email, event.password);
+      final token = await userRepository.login(event.email, event.password);
 
       if (token != null) {
         // Pega o usuário baseado no e-mail, afinal na API do ReqRes só retorna um token (nem é JWT)
         final user = await userRepository.getUser(event.email);
 
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('auth_token', token);
+        await prefs.setString('auth_token', token); // Armazena para uso futuro
 
         emit(LoginSuccess(user!));
       } else {
