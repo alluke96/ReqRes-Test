@@ -1,52 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
+import 'package:reqres_test/application/blocs/register_bloc.dart';
+import 'package:reqres_test/data/data_sources/user_api_data_source.dart';
+import 'package:reqres_test/data/repositories/user_repository.dart';
 import 'package:reqres_test/domain/use_cases/login_user.dart';
-import 'package:reqres_test/domain/use_cases/logout_user.dart';
 import 'package:reqres_test/domain/use_cases/register_user.dart';
 import 'package:reqres_test/presentation/pages/login_page.dart';
-import 'application/auth_service.dart';
-import 'data/data_sources/user_api_data_source.dart';
-import 'data/repositories/user_repository.dart';
+import 'package:reqres_test/application/blocs/login_bloc.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
 
-  runApp(const MyApp());
+  final httpClient = http.Client();
+  final apiDataSource = ApiDataSource(httpClient);
+  final userRepository = UserRepository(apiDataSource);
+  final loginUserUseCase = LoginUser(userRepository);
+  final registerUserUseCase = RegisterUser(userRepository);
+
+  runApp(MyApp(loginUserUseCase: loginUserUseCase, registerUserUseCase: registerUserUseCase));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final LoginUser loginUserUseCase;
+  final RegisterUser registerUserUseCase;
+
+  const MyApp({super.key, required this.loginUserUseCase, required this.registerUserUseCase});
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiBlocProvider(
       providers: [
-        Provider<http.Client>(create: (_) => http.Client()),
-        Provider<ApiDataSource>(create: (context) => ApiDataSource(context.read<http.Client>())),
-        ProxyProvider<ApiDataSource, UserRepository>(
-          update: (_, apiDataSource, __) => UserRepository(apiDataSource),
-        ),
-        ProxyProvider<UserRepository, LoginUser>(
-          update: (_, userRepository, __) => LoginUser(userRepository),
-        ),
-        ProxyProvider<UserRepository, LogoutUser>(
-          update: (_, userRepository, __) => LogoutUser(userRepository),
-        ),
-        ProxyProvider<UserRepository, RegisterUser>(
-          update: (_, userRepository, __) => RegisterUser(userRepository),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => AuthService(context.read<LoginUser>(), context.read<LogoutUser>(), context.read<RegisterUser>()),
-        ),
+        BlocProvider(create: (context) => LoginBloc(loginUserUseCase: loginUserUseCase)),
+        BlocProvider(create: (context) => RegisterBloc(registerUserUseCase: registerUserUseCase)),
       ],
-      child: MaterialApp(
-        title: 'Flutter Login',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: const LoginPage(),
+      child: const MaterialApp(
+        home: LoginPage(),
       ),
     );
   }

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
-import 'package:reqres_test/application/auth_service.dart';
-import 'package:reqres_test/domain/models/user.dart';
-import 'package:reqres_test/presentation/pages/home_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reqres_test/application/blocs/login_bloc.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -16,42 +12,12 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
 
-  void _login() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      // Double verification (API already does that)
-      if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-        throw Exception('Please enter e-mail and password');
-      }
-
-      final authService = Provider.of<AuthService>(context, listen: false);
-      User? user = await authService.login(
-        _emailController.text,
-        _passwordController.text,
-      );
-
-      if (user != null && mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(user: user)));
-      }
-    } catch (e) {
-      Logger().e(e.toString());
-      Fluttertoast.showToast(
-        msg: e.toString(), 
-        backgroundColor: Colors.red, 
-        webBgColor: 'linear-gradient(to right, #FF0000, #FF0000)', 
-        textColor: Colors.white, 
-        toastLength: Toast.LENGTH_LONG
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -117,7 +83,7 @@ class _LoginFormState extends State<LoginForm> {
 
           Center(
             child: TextButton(onPressed: () {}, 
-              child: const Text("Forgot Password?", style: TextStyle(color: Color.fromRGBO(198, 192, 135, 1)),
+              child: const Text("Forgot the password?", style: TextStyle(color: Color.fromRGBO(198, 192, 135, 1)),
             )
           )
                       ),
@@ -125,18 +91,22 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 30),
 
           MaterialButton(
-            onPressed: () => _isLoading ? null : _login(),
+            onPressed: () => {
+              // Dispara o evento de login no BLoC
+              context.read<LoginBloc>().add(
+                LoginButtonPressed(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                ),
+              )
+            },
             color: const Color.fromARGB(255, 180, 175, 30),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             height: 50,
-            child: Center(
-              child: _isLoading 
-                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white)) 
-                : const Text("Login", style: TextStyle(color: Colors.white)),
+            child: const Center(
+              child: Text("Login", style: TextStyle(color: Colors.white)),
             ),
           ),
-
-          const SizedBox(height: 30),
 
         ],
       ),

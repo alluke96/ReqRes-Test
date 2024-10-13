@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
-import 'package:reqres_test/application/auth_service.dart';
-import 'package:reqres_test/domain/models/user.dart';
-import 'package:reqres_test/presentation/pages/home_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reqres_test/application/blocs/register_bloc.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -16,43 +12,15 @@ class RegisterForm extends StatefulWidget {
 class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
 
-  void _register() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-        throw Exception('Please enter e-mail and password');
-      }
-
-      final authService = Provider.of<AuthService>(context, listen: false);
-      User? user = await authService.register(
-        _emailController.text,
-        _passwordController.text,
-      );
-
-      if (user != null && mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(user: user)));
-      }
-    } catch (e) {
-      Logger().e(e.toString());
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        backgroundColor: Colors.red,
-        webBgColor: 'linear-gradient(to right, #FF0000, #FF0000)',
-        textColor: Colors.white,
-        toastLength: Toast.LENGTH_LONG,
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -112,21 +80,25 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
           ),
 
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
 
           MaterialButton(
-            onPressed: () => _isLoading ? null : _register(),
+            onPressed: () => {
+              // Dispara o evento de register no BLoC
+              context.read<RegisterBloc>().add(
+                RegisterButtonPressed(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                ),
+              )
+            },
             color: const Color.fromARGB(255, 180, 175, 30),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             height: 50,
-            child: Center(
-              child: _isLoading 
-                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white)) 
-                : const Text("Create account", style: TextStyle(color: Colors.white)),
+            child: const Center(
+              child: Text("Login", style: TextStyle(color: Colors.white)),
             ),
           ),
-
-          const SizedBox(height: 30),
 
         ],
       ),
