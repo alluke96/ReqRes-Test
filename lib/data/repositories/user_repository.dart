@@ -7,7 +7,7 @@ class UserRepository {
 
   UserRepository(this.apiDataSource);
 
-  Future<User?> login(String email, String password) async {
+  Future<String?> login(String email, String password) async {
     final response = await apiDataSource.login(email, password);
     if (response.isEmpty) {
       Logger().e('Login failed');
@@ -15,8 +15,10 @@ class UserRepository {
     }
 
     final token = response['token'];
-    Logger().d('Login success with token: $token');
-    
+    return token;
+  }
+
+  Future<User?> getUser(String email) async {
     final users = await apiDataSource.getUsers();
 
     // Find user in users list
@@ -38,34 +40,5 @@ class UserRepository {
 
   Future<void> logout() async {
     return await apiDataSource.logout();
-  }
-
-  Future<User?> register(String email, String password) async {
-    final response = await apiDataSource.register(email, password);
-    if (response.isEmpty) {
-      Logger().e('Login failed');
-      return null;
-    }
-
-    final token = response['token'];
-    Logger().d('Login success with token: $token');
-    
-    final users = await apiDataSource.getUsers();
-
-    // Find user in users list
-    User? foundUser;
-    for (final u in users) {
-      if (u.email == email) {
-        foundUser = u;
-        break;
-      }
-    }
-
-    if (foundUser == null) {
-      Logger().e('User not found');
-      return null;
-    }
-
-    return await apiDataSource.getUser(foundUser.id);
   }
 }

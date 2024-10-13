@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:reqres_test/domain/models/user.dart';
 
@@ -7,7 +6,7 @@ class ApiDataSource {
   final String baseUrl;
   final http.Client httpClient;
 
-  ApiDataSource(this.httpClient, {String? baseUrl}): baseUrl = baseUrl ?? dotenv.get('API_URL');
+  ApiDataSource(this.httpClient, this.baseUrl);
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await httpClient.post(
@@ -60,18 +59,4 @@ class ApiDataSource {
     }
   }
 
-  Future<Map<String, dynamic>> register(String email, String password) async {
-    final response = await httpClient.post(
-      Uri.parse('$baseUrl/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      final error = jsonDecode(response.body)['error'];
-      throw Exception('Registration failed: $error');
-    }
-  }
 }
