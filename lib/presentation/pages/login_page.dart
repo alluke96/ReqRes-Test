@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
                   );
                 }
                 if (state is LoginSuccess) {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(user: state.user)));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
                 }
               },
               child: BlocBuilder<LoginBloc, LoginState>(

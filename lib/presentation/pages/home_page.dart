@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:reqres_test/domain/models/user.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reqres_test/application/blocs/login/login_bloc.dart';
+import 'package:reqres_test/application/blocs/login/login_events.dart';
+import 'package:reqres_test/application/blocs/login/login_states.dart';
 import 'package:reqres_test/presentation/pages/login_page.dart';
 
-class HomePage extends StatefulWidget {
-  final User user;
-
-  const HomePage({super.key, required this.user});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,22 +14,43 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Home'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Welcome, ${widget.user.firstName} ${widget.user.lastName}!'),
+      body: BlocBuilder<LoginBloc, LoginState>(
+        builder: (context, state) {
+          if (state is LoginSuccess) {
+            final user = state.user;
 
-            const SizedBox(height: 20),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Welcome, ${user.firstName} ${user.lastName}!'),
 
-            Image.network(widget.user.avatar),
+                  const SizedBox(height: 20),
 
-            const SizedBox(height: 20),
-            
-            ElevatedButton(onPressed: () => _logout(), child: const Text('Logout'))
-          ],
-        ),
+                  Image.network(user.avatar),
+
+                  const SizedBox(height: 20),
+                  
+                  ElevatedButton(
+                    onPressed: () => _logout(context),
+                    child: const Text('Logout'),
+                  ),
+                ],
+              ),
+            );
+          } else if (state is LoginLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return const Center(child: Text('Please log in.'));
+          }
+        },
       ),
     );
+  }
+
+  void _logout(BuildContext context) {
+    context.read<LoginBloc>().add(LogoutButtonPressed());
+
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 }

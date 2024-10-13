@@ -16,3 +16,5 @@ class LoginButtonPressed extends LoginEvent {
   @override
   List<Object> get props => [email, password];
 }
+
+class LogoutButtonPressed extends LoginEvent {}

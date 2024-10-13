@@ -13,6 +13,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   LoginBloc() : super(LoginInitial()) {
     on<LoginButtonPressed>(_onLoginButtonPressed);
+    on<LogoutButtonPressed>(_onLogoutButtonPressed);
   }
 
   void init(String baseUrl) {
@@ -47,5 +48,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginFailure(error.toString()));
       emit(LoginInitial());
     }
+  }
+
+  Future<void> _onLogoutButtonPressed(LogoutButtonPressed event, Emitter<LoginState> emit) async {
+    await userRepository.logout();
+    emit(LoginInitial());
   }
 }
