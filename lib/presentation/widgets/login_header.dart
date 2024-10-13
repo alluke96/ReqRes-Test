@@ -2,7 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 
 class LoginHeader extends StatelessWidget {
-  const LoginHeader({Key? key}) : super(key: key);
+  const LoginHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class LoginHeader extends StatelessWidget {
             top: -40,
             height: 400,
             width: width,
-            child: FadeInUp(duration: const Duration(seconds: 1), 
+            child: FadeInDown(duration: const Duration(seconds: 1), 
               child: Container(
                 decoration: const BoxDecoration(
                   image: DecorationImage(
@@ -32,7 +32,7 @@ class LoginHeader extends StatelessWidget {
           Positioned(
             height: 400,
             width: width,
-            child: FadeInUp(duration: const Duration(milliseconds: 1000), 
+            child: FadeInDown(duration: const Duration(milliseconds: 1000), 
               child: Container(
                 decoration: const BoxDecoration(
                   image: DecorationImage(
