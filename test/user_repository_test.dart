@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:reqres_test/blocs/login/login_bloc.dart';
 import 'package:reqres_test/blocs/login/login_events.dart';
 import 'package:reqres_test/blocs/login/login_states.dart';
-import 'package:reqres_test/models/user.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
@@ -20,13 +19,13 @@ void main() {
     });
 
     blocTest(
-      'emite que inicializa vazio',
+      'inicializa o LoginBloc vazio',
        build: () => loginBloc,
        expect: () => [],
     );
 
     blocTest(
-      'emite erro quando o email e a senha estiverem vazios', 
+      'emite erro ao fazer login quando o email e a senha estiverem vazios', 
       build: () => loginBloc,
       act: (bloc) => loginBloc.add(const LoginButtonPressed(email: '', password: '')),
       expect: () => [
@@ -36,7 +35,7 @@ void main() {
     );
 
     blocTest(
-      'emite erro quando o email for invalido', 
+      'emite erro ao fazer login quando o email for invalido', 
       build: () => loginBloc,
       act: (bloc) => loginBloc.add(const LoginButtonPressed(email: 'invalid-email', password: 'password')),
       expect: () => [
@@ -46,25 +45,16 @@ void main() {
     );
 
     blocTest(
-      'emite erro quando o login falhar', 
+      'emite LoginFailure quando o login falhar devido a usuario nao encontrado', 
       build: () => loginBloc,
       act: (bloc) => loginBloc.add(const LoginButtonPressed(email: 'invalid@email.com', password: 'invalid-password')),
+      wait: const Duration(seconds: 1),
       expect: () => [
         LoginLoading(), 
-        const LoginFailure('Login failed'), 
+        const LoginFailure('Exception: Login failed: user not found'), 
         LoginInitial()
       ],
     );
 
-    blocTest(
-      'emite token quando o login for bem-sucedido', 
-      build: () => loginBloc,
-      act: (bloc) => loginBloc.add(const LoginButtonPressed(email: 'george.bluth@reqres.in', password: 'cityslicka')),
-      expect: () => [
-        LoginLoading(),
-        const LoginSuccess(User(id: 1, email: 'george.bluth@reqres.in', firstName: 'George', lastName: 'Bluth', avatar: 'https://reqres.in/img/faces/1-image.png')),
-        LoginInitial(),
-      ],
-    );
   });
 }

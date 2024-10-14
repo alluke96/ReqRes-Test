@@ -41,10 +41,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         // Pega o usuário baseado no e-mail, afinal na API do ReqRes só retorna um token (nem é JWT)
         final user = await userRepository.getUser(event.email);
 
+        if (user == null) {
+          emit(const LoginFailure('User not found'));
+          emit(LoginInitial());
+          return;
+        }
+
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token); // Armazena para uso futuro
 
-        emit(LoginSuccess(user!));
+        emit(LoginSuccess(user));
       } else {
         emit(const LoginFailure('Login failed'));
         emit(LoginInitial());
