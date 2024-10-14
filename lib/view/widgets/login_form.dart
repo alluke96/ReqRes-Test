@@ -23,6 +23,11 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+
+    void submit() {
+      context.read<LoginBloc>().add(LoginButtonPressed(email: _emailController.text.trim().toLowerCase(), password: _passwordController.text.trim()));
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: Column(
@@ -69,6 +74,7 @@ class _LoginFormState extends State<LoginForm> {
                   child: TextField(
                     controller: _passwordController,
                     obscureText: true,
+                    onSubmitted: (value) => submit(),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: "Password",
@@ -84,28 +90,19 @@ class _LoginFormState extends State<LoginForm> {
 
           Center(
             child: TextButton(onPressed: () {}, 
-              child: const Text("Forgot the password?", style: TextStyle(color: Color.fromRGBO(198, 192, 135, 1)),
+              child: const Text("Forgot the password?", style: TextStyle(color: Color.fromRGBO(198, 192, 135, 1)))
             )
-          )
-                      ),
+          ),
 
           const SizedBox(height: 30),
 
           MaterialButton(
-            onPressed: () => {
-              // Dispara o evento de login no BLoC
-              context.read<LoginBloc>().add(
-                LoginButtonPressed(
-                  email: _emailController.text,
-                  password: _passwordController.text,
-                ),
-              )
-            },
-            color: const Color.fromARGB(255, 180, 175, 30),
+            onPressed: () => submit(),
+            color: Colors.yellow,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             height: 50,
             child: const Center(
-              child: Text("Login", style: TextStyle(color: Colors.white)),
+              child: Text("Login", style: TextStyle(color: Colors.black)),
             ),
           ),
 
