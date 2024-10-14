@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   late ApiDataSource apiDataSource;
-  late UserRepository userRepository;
+  UserRepository userRepository = UserRepository(ApiDataSource());
 
   LoginBloc() : super(LoginInitial()) {
     on<LoginButtonPressed>(_onLoginButtonPressed);

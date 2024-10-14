@@ -1,45 +1,69 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:http/http.dart' as http;
 import 'package:reqres_test/blocs/login/login_bloc.dart';
 import 'package:reqres_test/blocs/login/login_events.dart';
 import 'package:reqres_test/blocs/login/login_states.dart';
-import 'package:http/http.dart' as http;
-import 'package:reqres_test/data/repositories/user_repository.dart';
 import 'package:reqres_test/models/user.dart';
 
-class MockUserRepository extends Mock implements UserRepository {}
+class MockHttpClient extends Mock implements http.Client {}
 
-// Gerando mocks para o Client HTTP
-@GenerateNiceMocks([MockSpec<http.Client>()])
 void main() {
-  group('Login', () {
-    const user = User(
-      id: 2,
-      email: 'janet.weaver@reqres.in',
-      firstName: 'Janet',
-      lastName: 'Weaver',
-      avatar: 'https://reqres.in/img/faces/2-image.jpg',
+  group('LoginBloc', () {
+    late LoginBloc loginBloc;
+
+    setUp(() {
+      EquatableConfig.stringify = true;
+      loginBloc = LoginBloc()..init;
+    });
+
+    blocTest(
+      'emite que inicializa vazio',
+       build: () => loginBloc,
+       expect: () => [],
     );
 
-    final mockUserRepository = MockUserRepository();
-    // Mockando o comportamento do login no repositório
-    when(mockUserRepository.login('janet.weaver@reqres.in', 'cityslicka'))
-      .thenAnswer((_) async => Future.value('12345'));
-        
-    blocTest<LoginBloc, LoginState>(
-      'realiza login com sucesso',
-      build: () {
-        return LoginBloc();
-      },
-      act: (bloc) => bloc.add(const LoginButtonPressed(
-        email: 'janet.weaver@reqres.in', 
-        password: 'cityslicka',
-      )),
-      expect: () => <LoginState>[
+    blocTest(
+      'emite erro quando o email e a senha estiverem vazios', 
+      build: () => loginBloc,
+      act: (bloc) => loginBloc.add(const LoginButtonPressed(email: '', password: '')),
+      expect: () => [
+        const LoginFailure('Email and password are required'), 
+        LoginInitial()
+      ],
+    );
+
+    blocTest(
+      'emite erro quando o email for invalido', 
+      build: () => loginBloc,
+      act: (bloc) => loginBloc.add(const LoginButtonPressed(email: 'invalid-email', password: 'password')),
+      expect: () => [
+        const LoginFailure('Please enter a valid email'), 
+        LoginInitial()
+      ],
+    );
+
+    blocTest(
+      'emite erro quando o login falhar', 
+      build: () => loginBloc,
+      act: (bloc) => loginBloc.add(const LoginButtonPressed(email: 'invalid@email.com', password: 'invalid-password')),
+      expect: () => [
+        LoginLoading(), 
+        const LoginFailure('Login failed'), 
+        LoginInitial()
+      ],
+    );
+
+    blocTest(
+      'emite token quando o login for bem-sucedido', 
+      build: () => loginBloc,
+      act: (bloc) => loginBloc.add(const LoginButtonPressed(email: 'george.bluth@reqres.in', password: 'cityslicka')),
+      expect: () => [
         LoginLoading(),
-        const LoginSuccess(user),
+        const LoginSuccess(User(id: 1, email: 'george.bluth@reqres.in', firstName: 'George', lastName: 'Bluth', avatar: 'https://reqres.in/img/faces/1-image.png')),
+        LoginInitial(),
       ],
     );
   });
